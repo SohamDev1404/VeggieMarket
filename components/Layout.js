@@ -1,85 +1,71 @@
 import Head from 'next/head';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import MainNavbar from './Navbar';
+import { Container, Row, Col } from 'react-bootstrap';
+import { useState, useEffect } from 'react';
 
 export default function Layout({ children, title = 'Harvest Hub' }) {
-  const router = useRouter();
+  const [cartCount, setCartCount] = useState(0);
   
-  const isActive = (path) => {
-    return router.pathname === path ? 'text-green-500 border-b-2 border-green-500' : 'text-gray-600 hover:text-green-500';
-  };
+  // Get cart items from localStorage on client-side
+  useEffect(() => {
+    const getCartCount = () => {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      setCartCount(cart.length);
+    };
+    
+    getCartCount();
+    
+    // Listen for cart updates
+    window.addEventListener('cartUpdated', getCartCount);
+    
+    return () => {
+      window.removeEventListener('cartUpdated', getCartCount);
+    };
+  }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="d-flex flex-column min-vh-100">
       <Head>
-        <title>{title} | Bulk Vegetable & Fruit Orders</title>
+        <title>{`${title} | Bulk Vegetable & Fruit Orders`}</title>
         <meta name="description" content="Order fresh vegetables and fruits in bulk" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <header className="bg-white shadow-md">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold text-green-600 flex items-center">
-              <span className="mr-2">🥬</span> Harvest Hub
-            </Link>
-            
-            <nav className="hidden md:flex space-x-8">
-              <Link href="/" className={`${isActive('/')} font-medium py-2`}>
-                Products
-              </Link>
-              <Link href="/orders" className={`${isActive('/orders')} font-medium py-2`}>
-                Place Order
-              </Link>
-              <Link href="/track-order" className={`${isActive('/track-order')} font-medium py-2`}>
-                Track Order
-              </Link>
-              <Link href="/admin" className={`${isActive('/admin')} font-medium py-2`}>
-                Admin
-              </Link>
-            </nav>
-
-            <div className="md:hidden">
-              {/* Mobile menu button would go here */}
-              <button className="text-gray-500 hover:text-green-500">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="flex-grow">
-        {children}
+      
+      <MainNavbar cartItemCount={cartCount} />
+      
+      <main className="flex-grow-1 py-3">
+        <Container>
+          {children}
+        </Container>
       </main>
-
-      <footer className="bg-gray-800 text-white">
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <h3 className="text-xl font-bold mb-4">Harvest Hub</h3>
-              <p className="text-gray-300">Your trusted source for fresh, bulk produce.</p>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2">
-                <li><Link href="/" className="text-gray-300 hover:text-white">Products</Link></li>
-                <li><Link href="/orders" className="text-gray-300 hover:text-white">Place Order</Link></li>
-                <li><Link href="/track-order" className="text-gray-300 hover:text-white">Track Order</Link></li>
+      
+      <footer className="bg-light mt-auto border-top py-4">
+        <Container>
+          <Row>
+            <Col md={4} className="mb-3 mb-md-0">
+              <h5 className="text-success">Harvest Hub</h5>
+              <p className="text-muted">Fresh produce for bulk orders, directly from farmers to your business.</p>
+            </Col>
+            <Col md={4} className="mb-3 mb-md-0">
+              <h5>Quick Links</h5>
+              <ul className="list-unstyled">
+                <li><a href="/" className="text-decoration-none">Home</a></li>
+                <li><a href="/products" className="text-decoration-none">Products</a></li>
+                <li><a href="/orders" className="text-decoration-none">Orders</a></li>
+                <li><a href="/login" className="text-decoration-none">Login</a></li>
               </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Contact</h4>
-              <p className="text-gray-300">Email: info@harvesthub.com</p>
-              <p className="text-gray-300">Phone: (555) 123-4567</p>
-            </div>
-          </div>
-          <div className="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
-            <p>&copy; {new Date().getFullYear()} Harvest Hub. All rights reserved.</p>
-          </div>
-        </div>
+            </Col>
+            <Col md={4}>
+              <h5>Contact</h5>
+              <address className="text-muted">
+                <p>123 Farmer's Road<br />Harvest Valley, CA 94123</p>
+                <p>Email: info@harvesthub.com<br />Phone: (555) 123-4567</p>
+              </address>
+            </Col>
+          </Row>
+          <hr />
+          <p className="text-center text-muted mb-0">© {new Date().getFullYear()} Harvest Hub. All rights reserved.</p>
+        </Container>
       </footer>
     </div>
   );
