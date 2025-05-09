@@ -202,7 +202,7 @@ export default function CartPage() {
             <div className="d-flex justify-content-between mb-4">
               <Link href="/">
                 <Button variant="outline-secondary">
-                  <FontAwesomeIcon icon="arrow-left" className="me-2" />
+                  <i className="bi bi-arrow-left me-2"></i>
                   Continue Shopping
                 </Button>
               </Link>
@@ -212,7 +212,7 @@ export default function CartPage() {
                 const event = new Event('cartUpdated');
                 window.dispatchEvent(event);
               }}>
-                <FontAwesomeIcon icon="trash" className="me-2" />
+                <i className="bi bi-trash me-2"></i>
                 Clear Cart
               </Button>
             </div>

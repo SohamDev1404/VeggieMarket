@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Layout from '../components/Layout';
 import { Container, Row, Col, Form, Button, Card, Alert } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -71,13 +70,14 @@ export default function LoginPage() {
     setServerError('');
     
     try {
-      const endpoint = isLogin ? '/api/login' : '/api/register';
-      const response = await fetch(endpoint, {
+      const action = isLogin ? 'login' : 'register';
+      const response = await fetch('/api/auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          action,
           name: formData.name,
           email: formData.email,
           password: formData.password,
@@ -218,19 +218,19 @@ export default function LoginPage() {
               <p className="lead">Your source for fresh, bulk produce direct from farmers.</p>
               <ul className="list-unstyled mt-4">
                 <li className="mb-2">
-                  <FontAwesomeIcon icon="check" className="text-success me-2" />
+                  <i className="bi bi-check-circle-fill text-success me-2"></i>
                   Access bulk ordering for your business
                 </li>
                 <li className="mb-2">
-                  <FontAwesomeIcon icon="check" className="text-success me-2" />
+                  <i className="bi bi-check-circle-fill text-success me-2"></i>
                   Track your orders in real-time
                 </li>
                 <li className="mb-2">
-                  <FontAwesomeIcon icon="check" className="text-success me-2" />
+                  <i className="bi bi-check-circle-fill text-success me-2"></i>
                   Get fresh produce delivered directly to you
                 </li>
                 <li className="mb-2">
-                  <FontAwesomeIcon icon="check" className="text-success me-2" />
+                  <i className="bi bi-check-circle-fill text-success me-2"></i>
                   Support local farmers and sustainable agriculture
                 </li>
               </ul>
