@@ -110,11 +110,21 @@ export default function CheckoutPage() {
     setOrderError('');
     
     try {
+      // Check if cart has items
+      if (!cart || cart.length === 0) {
+        throw new Error('Your cart is empty. Please add items before checkout.');
+      }
+      
       // Prepare order items from cart
-      const orderItems = cart.map(item => ({
-        productId: item.productId,
+      const items = cart.map(item => ({
+        productId: item.product ? item.product.id : item.productId,
         quantity: item.quantity
-      }));
+      })).filter(item => item.productId); // Filter out any invalid items
+      
+      // Double-check we have items
+      if (items.length === 0) {
+        throw new Error('No valid items in cart');
+      }
       
       // Submit order to API
       const response = await fetch('/api/orders', {
@@ -127,7 +137,7 @@ export default function CheckoutPage() {
           contactNumber: formData.contactNumber,
           address: formData.address,
           notes: formData.notes,
-          orderItems
+          items: items
         }),
       });
       
