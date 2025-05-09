@@ -1,0 +1,17 @@
+import { useEffect } from 'react';
+import Head from 'next/head';
+import '../styles/globals.css';
+
+function MyApp({ Component, pageProps }) {
+  return (
+    <>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Harvest Hub | Bulk Vegetable & Fruit Orders</title>
+      </Head>
+      <Component {...pageProps} />
+    </>
+  );
+}
+
+export default MyApp;
