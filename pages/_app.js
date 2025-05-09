@@ -7,7 +7,7 @@ function MyApp({ Component, pageProps }) {
     <>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Harvest Hub | Bulk Vegetable & Fruit Orders</title>
+        <title>{`Harvest Hub | Bulk Vegetable & Fruit Orders`}</title>
       </Head>
       <Component {...pageProps} />
     </>
