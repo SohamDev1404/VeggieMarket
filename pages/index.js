@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
+import Link from 'next/link';
 import { Container, Row, Col, Card, Button, Carousel, Spinner, Alert, Form, InputGroup } from 'react-bootstrap';
 
 // Function to add products to cart
@@ -84,27 +85,46 @@ export default function Home() {
         <Carousel.Item>
           <img
             className="d-block w-100"
-            src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&h=400&q=80"
+            src="https://images.unsplash.com/photo-1467453678174-768ec283a940?q=80&w=1744&auto=format&fit=crop"
             alt="Fresh vegetables"
             style={{height: "400px", objectFit: "cover"}}
           />
           <Carousel.Caption className="bg-dark bg-opacity-50 rounded p-3">
             <h2>Fresh Produce for Bulk Orders</h2>
             <p>Quality vegetables sourced directly from local farms for your business needs.</p>
-            <Button variant="success">Browse Vegetables</Button>
+            <Link href="/products">
+              <Button variant="success">Browse All Products</Button>
+            </Link>
           </Carousel.Caption>
         </Carousel.Item>
         <Carousel.Item>
           <img
             className="d-block w-100"
-            src="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&h=400&q=80"
+            src="https://images.unsplash.com/photo-1610348725531-843dff563e2c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&h=400&q=80"
             alt="Fresh fruits"
             style={{height: "400px", objectFit: "cover"}}
           />
           <Carousel.Caption className="bg-dark bg-opacity-50 rounded p-3">
             <h2>Seasonal Fruits</h2>
             <p>Farm-fresh fruits available for bulk purchase at wholesale prices.</p>
-            <Button variant="warning" className="text-white">Browse Fruits</Button>
+            <Link href="/products">
+              <Button variant="warning" className="text-white">Shop Now</Button>
+            </Link>
+          </Carousel.Caption>
+        </Carousel.Item>
+        <Carousel.Item>
+          <img
+            className="d-block w-100"
+            src="https://images.unsplash.com/photo-1618723775840-401b1be362c9?q=80&w=1744&auto=format&fit=crop"
+            alt="Fresh herbs"
+            style={{height: "400px", objectFit: "cover"}}
+          />
+          <Carousel.Caption className="bg-dark bg-opacity-50 rounded p-3">
+            <h2>Aromatic Herbs</h2>
+            <p>Explore our selection of fresh culinary herbs for your restaurant or kitchen.</p>
+            <Link href="/products">
+              <Button variant="success">Discover Herbs</Button>
+            </Link>
           </Carousel.Caption>
         </Carousel.Item>
       </Carousel>

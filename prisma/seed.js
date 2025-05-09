@@ -6,70 +6,218 @@ async function main() {
   await prisma.orderItem.deleteMany({});
   await prisma.order.deleteMany({});
   await prisma.product.deleteMany({});
+  await prisma.user.deleteMany({});
 
   console.log('Seeding database...');
+
+  // Create admin user
+  await prisma.user.create({
+    data: {
+      name: 'Admin User',
+      email: 'admin@harvesthub.com',
+      password: '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm', // Password is 'password'
+      role: 'ADMIN',
+    }
+  });
+
+  // Create regular user
+  await prisma.user.create({
+    data: {
+      name: 'Test User',
+      email: 'user@harvesthub.com',
+      password: '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm', // Password is 'password'
+      role: 'CUSTOMER',
+    }
+  });
 
   // Create products
   const vegetables = [
     { 
-      name: 'Carrots', 
-      description: 'Fresh and crunchy carrots, perfect for salads and cooking.',
-      price: 1.99,
-      category: 'vegetable',
-      imageUrl: 'https://pixabay.com/get/g59c95251614514272dd8bb9cefd8520bc031c0b741f1239905b7269320281017b9a064d780f79e50d4a7697e7937653ea3927c1b278c5459dad10a35dacdb6f5_1280.jpg'
-    },
-    { 
-      name: 'Broccoli', 
-      description: 'Nutrient-rich broccoli florets.',
+      name: 'Organic Carrots', 
+      description: 'Fresh and crunchy organic carrots, perfect for salads and cooking. Locally grown without pesticides.',
       price: 2.49,
-      category: 'vegetable',
-      imageUrl: 'https://pixabay.com/get/gc5a6596596ea640e4843789af93bfd59ee73db37fe50b0548ef7caf477c7bae57e35f1256f4faeb1d0d22b7d4c5bb77c39de4a04f777d3049d61af0627aa4167_1280.jpg'
+      category: 'Vegetables',
+      unit: 'bundle',
+      inStock: 50,
+      imageUrl: 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?q=80&w=1480&auto=format&fit=crop'
     },
     { 
-      name: 'Spinach', 
-      description: 'Leafy green spinach, full of iron and vitamins.',
-      price: 1.79,
-      category: 'vegetable',
-      imageUrl: 'https://pixabay.com/get/gf311a81a4c2c99f653b174e9d90e5a452d1772b4d8ba382c492138f727d62b2b749cf36ffb6323ac1c7e4326e03b8de8ef261f558afa497af5808ff6405ad7fa_1280.jpg'
+      name: 'Premium Broccoli', 
+      description: 'Nutrient-rich broccoli florets, packed with vitamins and minerals. Excellent for steaming or stir-fry.',
+      price: 3.49,
+      category: 'Vegetables',
+      unit: 'head',
+      inStock: 35,
+      imageUrl: 'https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?q=80&w=1402&auto=format&fit=crop'
     },
     { 
-      name: 'Bell Peppers', 
-      description: 'Colorful bell peppers, sweet and crunchy.',
-      price: 3.29,
-      category: 'vegetable',
-      imageUrl: 'https://pixabay.com/get/ga16c89a8aaa511bd783a9a88b7069a6178f6c3ebecbd7ab912362ae850fdf2c00bc46e9ae688b698fc353238fc57feff019e67ae19bdf724b59328573883fa76_1280.jpg'
+      name: 'Baby Spinach', 
+      description: 'Tender baby spinach leaves, full of iron and vitamins. Perfect for salads or sautéing.',
+      price: 2.99,
+      category: 'Vegetables',
+      unit: 'bunch',
+      inStock: 40,
+      imageUrl: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?q=80&w=1480&auto=format&fit=crop'
+    },
+    { 
+      name: 'Mixed Bell Peppers', 
+      description: 'Colorful bell peppers - red, yellow, and green. Sweet and crunchy, great for salads or roasting.',
+      price: 4.99,
+      category: 'Vegetables',
+      unit: 'pack of 3',
+      inStock: 30,
+      imageUrl: 'https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?q=80&w=1374&auto=format&fit=crop'
+    },
+    { 
+      name: 'Cherry Tomatoes', 
+      description: 'Sweet and juicy cherry tomatoes, perfect for salads or snacking.',
+      price: 3.79,
+      category: 'Vegetables',
+      unit: 'pint',
+      inStock: 25,
+      imageUrl: 'https://images.unsplash.com/photo-1592924357220-5fbb57f4f30b?q=80&w=1470&auto=format&fit=crop'
+    },
+    { 
+      name: 'Zucchini', 
+      description: 'Fresh zucchini with tender flesh and mild flavor. Great for grilling or sautéing.',
+      price: 1.99,
+      category: 'Vegetables',
+      unit: 'lb',
+      inStock: 45,
+      imageUrl: 'https://images.unsplash.com/photo-1586765501019-cbe3973ef8fa?q=80&w=1480&auto=format&fit=crop'
+    },
+    { 
+      name: 'Red Onions', 
+      description: 'Sweet and flavorful red onions, perfect for salads and sandwiches.',
+      price: 1.49,
+      category: 'Vegetables',
+      unit: 'lb',
+      inStock: 60,
+      imageUrl: 'https://images.unsplash.com/photo-1518977956812-cd3dbadaaf31?q=80&w=1470&auto=format&fit=crop'
+    },
+    { 
+      name: 'Sweet Potatoes', 
+      description: 'Nutritious sweet potatoes with a rich, sweet flavor. Excellent for roasting or mashing.',
+      price: 2.29,
+      category: 'Vegetables',
+      unit: 'lb',
+      inStock: 55,
+      imageUrl: 'https://images.unsplash.com/photo-1596097557993-54339f4e051b?q=80&w=1470&auto=format&fit=crop'
     },
   ];
 
   const fruits = [
     { 
-      name: 'Apples', 
-      description: 'Crisp and sweet apples, perfect for snacking.',
-      price: 2.19,
-      category: 'fruit',
-      imageUrl: 'https://pixabay.com/get/ge175bb409d052d34f45a5175285238bff07d546ba1d7fd6e628e63b736098683dae38ea057cf1e7141f496d6c3924917ef67aac9d3bf0cfc6225dabf745aa71c_1280.jpg'
-    },
-    { 
-      name: 'Bananas', 
-      description: 'Ripe yellow bananas, ready to eat.',
-      price: 1.29,
-      category: 'fruit',
-      imageUrl: 'https://pixabay.com/get/g2046330168b7b0cc79e0a2949a14a17c0858870933b0a38a7aef5b0dadcc18d058d52e5b546ff623ed89efda4be00146304d2ade0811b335e1d5a4bdac2e308d_1280.jpg'
-    },
-    { 
-      name: 'Strawberries', 
-      description: 'Sweet and juicy strawberries.',
+      name: 'Honeycrisp Apples', 
+      description: 'Crisp and sweet Honeycrisp apples, perfect for snacking or baking.',
       price: 3.99,
-      category: 'fruit',
-      imageUrl: 'https://pixabay.com/get/g9abe6d0bdf173767f24cbbb1a7c7b27e2ab98a8af5be62c3f29ab356bb35f243a76149cb0642f9768d48d996d17751f7eeb1ae75cf50b09869c5246d93d46136_1280.jpg'
+      category: 'Fruits',
+      unit: 'lb',
+      inStock: 65,
+      imageUrl: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?q=80&w=1374&auto=format&fit=crop'
     },
     { 
-      name: 'Oranges', 
-      description: 'Juicy oranges, packed with vitamin C.',
-      price: 2.49,
-      category: 'fruit',
-      imageUrl: 'https://pixabay.com/get/gc05c824410a2b976b4d8f7dd5dd87d046367c97e217bdcd5fee8a7c16f7d9153b68f8b923949e6cf49076637c3d35a934d450567197fbd7d3c8c3d3e5f2e7907_1280.jpg'
+      name: 'Organic Bananas', 
+      description: 'Ripe yellow organic bananas, ready to eat or perfect for smoothies and baking.',
+      price: 1.99,
+      category: 'Fruits',
+      unit: 'bunch',
+      inStock: 80,
+      imageUrl: 'https://images.unsplash.com/photo-1603833665858-e61d17a86224?q=80&w=1374&auto=format&fit=crop'
     },
+    { 
+      name: 'Fresh Strawberries', 
+      description: 'Sweet and juicy strawberries, locally grown and hand-picked at peak ripeness.',
+      price: 4.99,
+      category: 'Fruits',
+      unit: 'pint',
+      inStock: 20,
+      imageUrl: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?q=80&w=1470&auto=format&fit=crop'
+    },
+    { 
+      name: 'Navel Oranges', 
+      description: 'Juicy navel oranges, packed with vitamin C. Sweet and seedless.',
+      price: 3.49,
+      category: 'Fruits',
+      unit: 'lb',
+      inStock: 50,
+      imageUrl: 'https://images.unsplash.com/photo-1611080626919-7cf5a9dbab12?q=80&w=1470&auto=format&fit=crop'
+    },
+    { 
+      name: 'Ripe Avocados', 
+      description: 'Creamy Hass avocados, perfect for guacamole or toast. Ready to eat.',
+      price: 2.99,
+      category: 'Fruits',
+      unit: 'each',
+      inStock: 40,
+      imageUrl: 'https://images.unsplash.com/photo-1519162808019-7de1683fa2ad?q=80&w=1375&auto=format&fit=crop'
+    },
+    { 
+      name: 'Fresh Blueberries', 
+      description: 'Plump and sweet blueberries, packed with antioxidants. Great for snacking or baking.',
+      price: 5.99,
+      category: 'Fruits',
+      unit: 'pint',
+      inStock: 15,
+      imageUrl: 'https://images.unsplash.com/photo-1498557850523-fd3d118b962e?q=80&w=1469&auto=format&fit=crop'
+    },
+    { 
+      name: 'Ripe Mangoes', 
+      description: 'Sweet and juicy mangoes, perfect for smoothies, salads, or eating fresh.',
+      price: 2.49,
+      category: 'Fruits',
+      unit: 'each',
+      inStock: 30,
+      imageUrl: 'https://images.unsplash.com/photo-1605027990121-cbae9e0642df?q=80&w=1470&auto=format&fit=crop'
+    },
+    { 
+      name: 'Red Grapes', 
+      description: 'Sweet and seedless red grapes, perfect for snacking or adding to fruit salads.',
+      price: 3.99,
+      category: 'Fruits',
+      unit: 'lb',
+      inStock: 45,
+      imageUrl: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?q=80&w=1473&auto=format&fit=crop'
+    }
+  ];
+
+  const herbs = [
+    { 
+      name: 'Fresh Basil', 
+      description: 'Aromatic fresh basil, perfect for Italian dishes, pesto, or garnishing.',
+      price: 2.49,
+      category: 'Herbs',
+      unit: 'bunch',
+      inStock: 25,
+      imageUrl: 'https://images.unsplash.com/photo-1618164264923-112086c39ace?q=80&w=1374&auto=format&fit=crop'
+    },
+    { 
+      name: 'Fresh Cilantro', 
+      description: 'Fragrant cilantro, essential for Mexican, Thai, and Indian cuisines.',
+      price: 1.99,
+      category: 'Herbs',
+      unit: 'bunch',
+      inStock: 30,
+      imageUrl: 'https://images.unsplash.com/photo-1526318472351-c75fcf070305?q=80&w=1476&auto=format&fit=crop'
+    },
+    { 
+      name: 'Fresh Mint', 
+      description: 'Refreshing mint leaves, great for teas, cocktails, and Mediterranean dishes.',
+      price: 2.29,
+      category: 'Herbs',
+      unit: 'bunch',
+      inStock: 20,
+      imageUrl: 'https://images.unsplash.com/photo-1628614541857-211514dda81e?q=80&w=1470&auto=format&fit=crop'
+    },
+    { 
+      name: 'Fresh Rosemary', 
+      description: 'Aromatic rosemary sprigs, perfect for roasts, potatoes, and bread.',
+      price: 2.49,
+      category: 'Herbs',
+      unit: 'bunch',
+      inStock: 15,
+      imageUrl: 'https://images.unsplash.com/photo-1515586000433-45406d8e6662?q=80&w=1470&auto=format&fit=crop'
+    }
   ];
 
   for (const vegetable of vegetables) {
@@ -78,6 +226,10 @@ async function main() {
 
   for (const fruit of fruits) {
     await prisma.product.create({ data: fruit });
+  }
+  
+  for (const herb of herbs) {
+    await prisma.product.create({ data: herb });
   }
 
   console.log('Database seeded successfully!');
