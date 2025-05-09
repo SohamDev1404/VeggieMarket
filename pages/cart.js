@@ -97,19 +97,76 @@ export default function CartPage() {
     return (
       <Layout title="Shopping Cart">
         <Container>
-          <h1 className="mb-4">Your Cart</h1>
-          <Card className="shadow-sm">
-            <Card.Body className="text-center py-5">
-              <i className="bi bi-cart3 fs-1 text-muted mb-3"></i>
-              <h3>Your cart is empty</h3>
-              <p className="text-muted">Looks like you haven't added any products to your cart yet.</p>
-              <Link href="/">
-                <Button variant="success" className="mt-3">
-                  Browse Products
-                </Button>
-              </Link>
-            </Card.Body>
-          </Card>
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <h1 className="mb-0">Your Cart</h1>
+            <span className="badge bg-secondary rounded-pill fs-6">0 items</span>
+          </div>
+          
+          <Row className="justify-content-center">
+            <Col lg={8} md={10}>
+              <Card className="border-0 shadow-sm">
+                <Card.Body className="text-center py-5">
+                  <div className="empty-cart-icon bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style={{ width: '120px', height: '120px' }}>
+                    <i className="bi bi-cart3 fs-1 text-success"></i>
+                  </div>
+                  <h3 className="mb-3">Your cart is empty</h3>
+                  <p className="text-muted mb-4">
+                    Looks like you haven't added any products to your cart yet.<br />
+                    Browse our selection of fresh products and start shopping!
+                  </p>
+                  <div className="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                    <Link href="/products">
+                      <Button variant="success" size="lg">
+                        <i className="bi bi-bag me-2"></i>
+                        Browse Products
+                      </Button>
+                    </Link>
+                    <Link href="/">
+                      <Button variant="outline-secondary" size="lg">
+                        <i className="bi bi-house me-2"></i>
+                        Back to Home
+                      </Button>
+                    </Link>
+                  </div>
+                </Card.Body>
+              </Card>
+              
+              <div className="mt-5">
+                <h5 className="text-center mb-4">You might be interested in</h5>
+                <div className="d-flex flex-wrap justify-content-center gap-3">
+                  <Card className="featured-product shadow-sm" style={{ width: '180px' }}>
+                    <Card.Img variant="top" src="https://images.unsplash.com/photo-1518977881905-4b3f1b7bb250?q=80&w=1470&auto=format&fit=crop" style={{ height: '120px', objectFit: 'cover' }} />
+                    <Card.Body className="p-2 text-center">
+                      <Card.Title className="fs-6 mb-1">Fresh Vegetables</Card.Title>
+                      <Link href="/products?category=vegetable">
+                        <Button variant="outline-success" size="sm" className="w-100">View Products</Button>
+                      </Link>
+                    </Card.Body>
+                  </Card>
+                  
+                  <Card className="featured-product shadow-sm" style={{ width: '180px' }}>
+                    <Card.Img variant="top" src="https://images.unsplash.com/photo-1577234286642-fc512a5f8f11?q=80&w=1470&auto=format&fit=crop" style={{ height: '120px', objectFit: 'cover' }} />
+                    <Card.Body className="p-2 text-center">
+                      <Card.Title className="fs-6 mb-1">Organic Fruits</Card.Title>
+                      <Link href="/products?category=fruit">
+                        <Button variant="outline-success" size="sm" className="w-100">View Products</Button>
+                      </Link>
+                    </Card.Body>
+                  </Card>
+                  
+                  <Card className="featured-product shadow-sm" style={{ width: '180px' }}>
+                    <Card.Img variant="top" src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=1470&auto=format&fit=crop" style={{ height: '120px', objectFit: 'cover' }} />
+                    <Card.Body className="p-2 text-center">
+                      <Card.Title className="fs-6 mb-1">Fresh Herbs</Card.Title>
+                      <Link href="/products?category=herb">
+                        <Button variant="outline-success" size="sm" className="w-100">View Products</Button>
+                      </Link>
+                    </Card.Body>
+                  </Card>
+                </div>
+              </div>
+            </Col>
+          </Row>
         </Container>
       </Layout>
     );
@@ -118,129 +175,183 @@ export default function CartPage() {
   return (
     <Layout title="Shopping Cart">
       <Container>
-        <h1 className="mb-4">Your Cart</h1>
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h1 className="mb-0">Your Cart</h1>
+          <span className="badge bg-success rounded-pill fs-6">{cart.length} {cart.length === 1 ? 'item' : 'items'}</span>
+        </div>
         
         <Row>
           <Col lg={8}>
-            <Card className="shadow-sm mb-4">
-              <Card.Body>
-                <Table responsive className="mb-0">
-                  <thead>
-                    <tr>
-                      <th>Product</th>
-                      <th className="text-center">Price</th>
-                      <th className="text-center">Quantity</th>
-                      <th className="text-center">Subtotal</th>
-                      <th className="text-center">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {cart.map(item => (
-                      <tr key={item.productId}>
-                        <td>
-                          <div className="d-flex align-items-center">
-                            {item.product?.imageUrl && (
-                              <img 
-                                src={item.product.imageUrl} 
-                                alt={item.product.name} 
-                                className="me-3" 
-                                style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} 
-                              />
-                            )}
-                            <div>
-                              <h6 className="mb-0">{item.product?.name || 'Product'}</h6>
-                              <small className="text-muted">{item.product?.category || 'Category'}</small>
+            <Card className="shadow-sm mb-4 border-0">
+              <Card.Body className="p-0">
+                {cart.map((item, index) => (
+                  <div key={item.productId} className={`cart-item p-3 ${index < cart.length - 1 ? 'border-bottom' : ''}`}>
+                    <div className="d-flex align-items-center">
+                      <div className="cart-item-image me-3">
+                        {item.product?.imageUrl ? (
+                          <img 
+                            src={item.product.imageUrl} 
+                            alt={item.product.name} 
+                            className="rounded" 
+                            style={{ width: '80px', height: '80px', objectFit: 'cover' }} 
+                          />
+                        ) : (
+                          <div className="bg-light rounded d-flex align-items-center justify-content-center" style={{ width: '80px', height: '80px' }}>
+                            <i className="bi bi-image text-muted fs-4"></i>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="cart-item-details flex-grow-1">
+                        <div className="d-flex justify-content-between align-items-start mb-2">
+                          <div>
+                            <h5 className="mb-0">{item.product?.name || 'Product'}</h5>
+                            <div className="text-muted small">
+                              <span className="badge bg-light text-dark me-2">
+                                {item.product?.category || 'Category'}
+                              </span>
+                              {item.product?.unit && (
+                                <span>${item.product.price.toFixed(2)} / {item.product.unit}</span>
+                              )}
                             </div>
                           </div>
-                        </td>
-                        <td className="text-center align-middle">
-                          ${item.product?.price.toFixed(2) || '0.00'}
-                        </td>
-                        <td className="text-center align-middle">
-                          <InputGroup size="sm" style={{ maxWidth: '120px', margin: '0 auto' }}>
+                          <Button 
+                            variant="link" 
+                            className="text-danger p-0" 
+                            onClick={() => removeFromCart(item.productId)}
+                          >
+                            <i className="bi bi-x-circle"></i>
+                          </Button>
+                        </div>
+                        
+                        <div className="d-flex justify-content-between align-items-center">
+                          <div className="quantity-controls d-flex align-items-center">
                             <Button 
                               variant="outline-secondary" 
+                              size="sm"
+                              className="rounded-circle p-1"
+                              style={{ width: '32px', height: '32px' }}
                               onClick={() => updateQuantity(item.productId, item.quantity - 1)}
                               disabled={item.quantity <= 1}
                             >
                               <i className="bi bi-dash"></i>
                             </Button>
-                            <Form.Control 
-                              type="number" 
-                              value={item.quantity} 
-                              min="1"
-                              onChange={(e) => updateQuantity(item.productId, parseInt(e.target.value) || 1)}
-                              className="text-center"
-                            />
+                            <span className="mx-3">{item.quantity}</span>
                             <Button 
                               variant="outline-secondary" 
+                              size="sm"
+                              className="rounded-circle p-1"
+                              style={{ width: '32px', height: '32px' }}
                               onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                             >
                               <i className="bi bi-plus"></i>
                             </Button>
-                          </InputGroup>
-                        </td>
-                        <td className="text-center align-middle fw-bold">
-                          ${calculateSubtotal(item).toFixed(2)}
-                        </td>
-                        <td className="text-center align-middle">
-                          <Button 
-                            variant="outline-danger" 
-                            size="sm"
-                            onClick={() => removeFromCart(item.productId)}
-                          >
-                            <i className="bi bi-trash"></i>
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
+                          </div>
+                          
+                          <div className="subtotal text-end">
+                            <span className="text-muted me-2">Subtotal:</span>
+                            <span className="fw-bold text-success fs-5">
+                              ${calculateSubtotal(item).toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </Card.Body>
-            </Card>
-            
-            <div className="d-flex justify-content-between mb-4">
-              <Link href="/">
-                <Button variant="outline-secondary">
-                  <i className="bi bi-arrow-left me-2"></i>
-                  Continue Shopping
+              <Card.Footer className="bg-white d-flex justify-content-between py-3">
+                <Link href="/products">
+                  <Button variant="outline-secondary">
+                    <i className="bi bi-arrow-left me-2"></i>
+                    Continue Shopping
+                  </Button>
+                </Link>
+                <Button 
+                  variant="outline-danger" 
+                  onClick={() => {
+                    if (confirm('Are you sure you want to clear your cart?')) {
+                      localStorage.setItem('cart', JSON.stringify([]));
+                      setCart([]);
+                      const event = new Event('cartUpdated');
+                      window.dispatchEvent(event);
+                    }
+                  }}
+                >
+                  <i className="bi bi-trash me-2"></i>
+                  Clear Cart
                 </Button>
-              </Link>
-              <Button variant="outline-success" onClick={() => {
-                localStorage.setItem('cart', JSON.stringify([]));
-                setCart([]);
-                const event = new Event('cartUpdated');
-                window.dispatchEvent(event);
-              }}>
-                <i className="bi bi-trash me-2"></i>
-                Clear Cart
-              </Button>
-            </div>
+              </Card.Footer>
+            </Card>
           </Col>
           
           <Col lg={4}>
-            <Card className="shadow-sm">
-              <Card.Header as="h5">Order Summary</Card.Header>
+            <Card className="border-0 shadow-sm mb-4">
+              <Card.Header className="bg-success text-white">
+                <h5 className="mb-0">Order Summary</h5>
+              </Card.Header>
               <Card.Body>
-                <div className="d-flex justify-content-between mb-2">
-                  <span>Subtotal:</span>
-                  <span>${calculateTotal().toFixed(2)}</span>
+                <div className="d-flex justify-content-between mb-3">
+                  <span>Subtotal ({cart.reduce((sum, item) => sum + item.quantity, 0)} items):</span>
+                  <span className="fw-bold">${calculateTotal().toFixed(2)}</span>
                 </div>
-                <div className="d-flex justify-content-between mb-2">
+                <div className="d-flex justify-content-between mb-3">
                   <span>Shipping:</span>
-                  <span>$0.00</span>
+                  <span className="fw-bold text-success">Free</span>
                 </div>
+                {calculateTotal() > 100 && (
+                  <div className="alert alert-success py-2 small mb-3">
+                    <i className="bi bi-check-circle-fill me-2"></i>
+                    You've qualified for free shipping!
+                  </div>
+                )}
                 <hr />
-                <div className="d-flex justify-content-between mb-3 fw-bold">
-                  <span>Total:</span>
-                  <span className="text-success">${calculateTotal().toFixed(2)}</span>
+                <div className="d-flex justify-content-between mb-4">
+                  <span className="fw-bold fs-5">Total:</span>
+                  <span className="fw-bold text-success fs-4">${calculateTotal().toFixed(2)}</span>
                 </div>
                 
                 <Link href="/checkout">
-                  <Button variant="success" className="w-100">
+                  <Button 
+                    variant="success" 
+                    size="lg" 
+                    className="w-100 mb-3"
+                    disabled={cart.length === 0}
+                  >
+                    <i className="bi bi-credit-card me-2"></i>
                     Proceed to Checkout
                   </Button>
                 </Link>
+                
+                <div className="text-center text-muted small">
+                  <p className="mb-1">Secure Checkout</p>
+                  <div>
+                    <i className="bi bi-lock-fill me-2"></i>
+                    <i className="bi bi-credit-card me-2"></i>
+                    <i className="bi bi-truck me-2"></i>
+                    <i className="bi bi-shield-check"></i>
+                  </div>
+                </div>
+              </Card.Body>
+            </Card>
+            
+            <Card className="border-0 shadow-sm">
+              <Card.Body>
+                <h6>Need Help?</h6>
+                <ul className="list-unstyled">
+                  <li className="mb-2">
+                    <i className="bi bi-question-circle text-success me-2"></i>
+                    Shipping &amp; Delivery
+                  </li>
+                  <li className="mb-2">
+                    <i className="bi bi-arrow-return-left text-success me-2"></i>
+                    Returns &amp; Refunds
+                  </li>
+                  <li>
+                    <i className="bi bi-envelope text-success me-2"></i>
+                    Contact Support
+                  </li>
+                </ul>
               </Card.Body>
             </Card>
           </Col>

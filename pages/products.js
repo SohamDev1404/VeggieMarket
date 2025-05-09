@@ -98,10 +98,33 @@ export default function ProductsPage() {
   
   return (
     <Layout title="Products">
-      <div className="product-hero-banner text-white text-center py-5 mb-4">
-        <Container>
+      <div 
+        className="product-hero-banner text-white text-center py-5 mb-4"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(https://images.unsplash.com/photo-1590779033100-9f60a05a013d?q=80&w=1744&auto=format&fit=crop)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          borderRadius: '0.5rem',
+          marginTop: '1rem'
+        }}
+      >
+        <Container className="py-4">
           <h1 className="display-4 fw-bold">Fresh Harvest Products</h1>
-          <p className="lead">Discover our selection of fresh, locally-sourced produce</p>
+          <p className="lead mb-4">Discover our selection of fresh, locally-sourced produce</p>
+          <div className="d-flex justify-content-center gap-3">
+            <Button variant="success" onClick={() => setCategoryFilter('vegetable')}>
+              <i className="bi bi-basket-fill me-2"></i>
+              Browse Vegetables
+            </Button>
+            <Button variant="warning" className="text-white" onClick={() => setCategoryFilter('fruit')}>
+              <i className="bi bi-apple me-2"></i>
+              Browse Fruits
+            </Button>
+            <Button variant="info" className="text-white" onClick={() => setCategoryFilter('herb')}>
+              <i className="bi bi-flower1 me-2"></i>
+              Browse Herbs
+            </Button>
+          </div>
         </Container>
       </div>
       
