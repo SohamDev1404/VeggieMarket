@@ -1,151 +1,248 @@
 import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
-import ProductCard from '../components/ProductCard';
+import { Container, Row, Col, Card, Button, Carousel, Spinner, Alert, Form, InputGroup } from 'react-bootstrap';
+
+// Function to add products to cart
+const addToCart = (product, quantity) => {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  
+  // Check if product already exists in cart
+  const existingItemIndex = cart.findIndex(item => item.productId === product.id);
+  
+  if (existingItemIndex >= 0) {
+    // Update quantity if product exists
+    cart[existingItemIndex].quantity += quantity;
+  } else {
+    // Add new item if product doesn't exist
+    cart.push({
+      productId: product.id,
+      quantity: quantity
+    });
+  }
+  
+  // Save updated cart to localStorage
+  localStorage.setItem('cart', JSON.stringify(cart));
+  
+  // Dispatch custom event to update cart count in header
+  const event = new Event('cartUpdated');
+  window.dispatchEvent(event);
+};
 
 export default function Home() {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filter, setFilter] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [quantities, setQuantities] = useState({});
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch('/api/products');
-        if (!res.ok) throw new Error('Failed to fetch products');
-        const data = await res.json();
+        const response = await fetch('/api/products');
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        const data = await response.json();
         setProducts(data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
+        
+        // Initialize quantities state
+        const initialQuantities = {};
+        data.forEach(product => {
+          initialQuantities[product.id] = 1;
+        });
+        setQuantities(initialQuantities);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchProducts();
   }, []);
-
-  const filteredProducts = filter === 'all' 
+  
+  // Get unique categories from products
+  const categories = ['all', ...new Set(products.map(product => product.category))];
+  
+  // Filter products by selected category
+  const filteredProducts = selectedCategory === 'all' 
     ? products 
-    : products.filter(product => product.category === filter);
+    : products.filter(product => product.category === selectedCategory);
+  
+  // Update quantity for specific product
+  const updateQuantity = (productId, value) => {
+    setQuantities(prev => ({
+      ...prev,
+      [productId]: value
+    }));
+  };
 
   return (
-    <Layout title="Fresh Produce">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-green-500 to-green-600 text-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="md:w-1/2 mb-8 md:mb-0">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">Fresh Produce for Your Business</h1>
-              <p className="text-xl mb-6">High-quality bulk vegetables and fruits delivered to your doorstep.</p>
-              <a href="#products" className="btn bg-white text-green-600 hover:bg-gray-100 px-6 py-3 font-medium rounded-md inline-block">
-                Browse Products
-              </a>
-            </div>
-            <div className="md:w-1/2 flex justify-center">
-              <img 
-                src="https://pixabay.com/get/g59c95251614514272dd8bb9cefd8520bc031c0b741f1239905b7269320281017b9a064d780f79e50d4a7697e7937653ea3927c1b278c5459dad10a35dacdb6f5_1280.jpg" 
-                alt="Fresh vegetables and fruits" 
-                className="rounded-lg shadow-xl max-w-full h-auto"
-                style={{ maxHeight: '350px' }}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+    <Layout title="Home">
+      {/* Hero Section with Carousel */}
+      <Carousel className="mb-5 shadow">
+        <Carousel.Item>
+          <img
+            className="d-block w-100"
+            src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&h=400&q=80"
+            alt="Fresh vegetables"
+            style={{height: "400px", objectFit: "cover"}}
+          />
+          <Carousel.Caption className="bg-dark bg-opacity-50 rounded p-3">
+            <h2>Fresh Produce for Bulk Orders</h2>
+            <p>Quality vegetables sourced directly from local farms for your business needs.</p>
+            <Button variant="success">Browse Vegetables</Button>
+          </Carousel.Caption>
+        </Carousel.Item>
+        <Carousel.Item>
+          <img
+            className="d-block w-100"
+            src="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&h=400&q=80"
+            alt="Fresh fruits"
+            style={{height: "400px", objectFit: "cover"}}
+          />
+          <Carousel.Caption className="bg-dark bg-opacity-50 rounded p-3">
+            <h2>Seasonal Fruits</h2>
+            <p>Farm-fresh fruits available for bulk purchase at wholesale prices.</p>
+            <Button variant="warning" className="text-white">Browse Fruits</Button>
+          </Carousel.Caption>
+        </Carousel.Item>
+      </Carousel>
 
-      {/* Category Filter */}
-      <section id="products" className="py-12 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">Our Fresh Produce</h2>
-          
-          <div className="flex flex-wrap justify-center gap-4 mb-8">
-            <button 
-              onClick={() => setFilter('all')}
-              className={`px-4 py-2 rounded-full ${filter === 'all' ? 'bg-green-500 text-white' : 'bg-white text-gray-700'}`}
-            >
-              All Products
-            </button>
-            <button 
-              onClick={() => setFilter('vegetable')}
-              className={`px-4 py-2 rounded-full ${filter === 'vegetable' ? 'bg-green-500 text-white' : 'bg-white text-gray-700'}`}
-            >
-              Vegetables
-            </button>
-            <button 
-              onClick={() => setFilter('fruit')}
-              className={`px-4 py-2 rounded-full ${filter === 'fruit' ? 'bg-green-500 text-white' : 'bg-white text-gray-700'}`}
-            >
-              Fruits
-            </button>
-          </div>
-          
-          {loading ? (
-            <div className="text-center py-8">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-500"></div>
-              <p className="mt-2 text-gray-600">Loading products...</p>
-            </div>
-          ) : error ? (
-            <div className="text-center py-8 text-red-600">
-              <p>{error}</p>
-              <button 
-                onClick={() => window.location.reload()}
-                className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+      {/* Products Section */}
+      <Container className="mb-5">
+        <h2 className="text-center mb-4">Our Products</h2>
+        
+        {/* Category Filter */}
+        <div className="d-flex justify-content-center mb-4">
+          <div className="btn-group">
+            {categories.map(category => (
+              <Button 
+                key={category} 
+                variant={selectedCategory === category ? "success" : "outline-success"}
+                onClick={() => setSelectedCategory(category)}
               >
-                Try Again
-              </button>
-            </div>
-          ) : filteredProducts.length === 0 ? (
-            <div className="text-center py-8 text-gray-600">
-              <p>No products found in this category.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {filteredProducts.map(product => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-      
-      {/* Features Section */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Why Choose Us?</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-6 bg-gray-50 rounded-lg">
-              <div className="text-green-500 text-4xl mb-4">🌱</div>
-              <h3 className="text-xl font-semibold mb-2">Fresh & Quality</h3>
-              <p className="text-gray-600">We source directly from farms to ensure the freshest produce for your business.</p>
-            </div>
-            
-            <div className="text-center p-6 bg-gray-50 rounded-lg">
-              <div className="text-green-500 text-4xl mb-4">📦</div>
-              <h3 className="text-xl font-semibold mb-2">Bulk Ordering</h3>
-              <p className="text-gray-600">Designed for businesses that need large quantities at competitive prices.</p>
-            </div>
-            
-            <div className="text-center p-6 bg-gray-50 rounded-lg">
-              <div className="text-green-500 text-4xl mb-4">🚚</div>
-              <h3 className="text-xl font-semibold mb-2">Reliable Delivery</h3>
-              <p className="text-gray-600">Track your orders and get timely deliveries right to your doorstep.</p>
-            </div>
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </Button>
+            ))}
           </div>
         </div>
-      </section>
-      
-      {/* CTA Section */}
-      <section className="py-16 bg-green-50">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Place Your First Order?</h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">Join hundreds of businesses that trust us for their fresh produce needs.</p>
-          <a href="/orders" className="btn btn-primary px-8 py-3 text-lg font-medium">
-            Start Ordering Now
-          </a>
-        </div>
-      </section>
+        
+        {isLoading ? (
+          <div className="text-center py-5">
+            <Spinner animation="border" variant="success" />
+            <p className="mt-2">Loading products...</p>
+          </div>
+        ) : error ? (
+          <Alert variant="danger">{error}</Alert>
+        ) : filteredProducts.length === 0 ? (
+          <Alert variant="info">No products found in this category.</Alert>
+        ) : (
+          <Row xs={1} md={2} lg={3} className="g-4">
+            {filteredProducts.map((product) => (
+              <Col key={product.id}>
+                <Card className="h-100 shadow-sm hover-shadow transition">
+                  <Card.Img 
+                    variant="top" 
+                    src={product.imageUrl || 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=400&h=300&auto=format&fit=crop'} 
+                    alt={product.name}
+                    style={{height: "200px", objectFit: "cover"}}
+                  />
+                  <Card.Body>
+                    <div className="d-flex justify-content-between align-items-start">
+                      <div>
+                        <Card.Title>{product.name}</Card.Title>
+                        <Card.Subtitle className="mb-2 text-muted">{product.category}</Card.Subtitle>
+                      </div>
+                      <span className="badge bg-success rounded-pill">${product.price.toFixed(2)}/kg</span>
+                    </div>
+                    <Card.Text className="text-muted small">{product.description}</Card.Text>
+                    <hr />
+                    <div className="d-flex justify-content-between align-items-center">
+                      <InputGroup size="sm" style={{width: "120px"}}>
+                        <Button 
+                          variant="outline-secondary" 
+                          onClick={() => updateQuantity(product.id, Math.max(1, quantities[product.id] - 1))}
+                        >
+                          <i className="bi bi-dash"></i>
+                        </Button>
+                        <Form.Control 
+                          type="number" 
+                          min="1" 
+                          value={quantities[product.id] || 1} 
+                          onChange={(e) => updateQuantity(product.id, parseInt(e.target.value) || 1)}
+                          className="text-center"
+                        />
+                        <Button 
+                          variant="outline-secondary" 
+                          onClick={() => updateQuantity(product.id, quantities[product.id] + 1)}
+                        >
+                          <i className="bi bi-plus"></i>
+                        </Button>
+                      </InputGroup>
+                      <Button 
+                        variant="success" 
+                        onClick={() => addToCart(product, quantities[product.id])}
+                      >
+                        <i className="bi bi-cart-plus me-1"></i>
+                        Add
+                      </Button>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        )}
+      </Container>
+
+      {/* Features Section */}
+      <div className="bg-light py-5 mb-5">
+        <Container>
+          <h2 className="text-center mb-4">Why Choose Harvest Hub?</h2>
+          <Row className="g-4">
+            <Col md={4}>
+              <Card className="h-100 border-0 shadow-sm">
+                <Card.Body className="text-center p-4">
+                  <div className="mb-3">
+                    <i className="bi bi-flower2 fs-1 text-success"></i>
+                  </div>
+                  <Card.Title className="fs-4">Fresh Quality</Card.Title>
+                  <Card.Text>
+                    All products sourced directly from local farms, ensuring freshness and quality.
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col md={4}>
+              <Card className="h-100 border-0 shadow-sm">
+                <Card.Body className="text-center p-4">
+                  <div className="mb-3">
+                    <i className="bi bi-truck fs-1 text-success"></i>
+                  </div>
+                  <Card.Title className="fs-4">Fast Delivery</Card.Title>
+                  <Card.Text>
+                    Reliable delivery service to ensure your produce arrives on time and in perfect condition.
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col md={4}>
+              <Card className="h-100 border-0 shadow-sm">
+                <Card.Body className="text-center p-4">
+                  <div className="mb-3">
+                    <i className="bi bi-check-circle fs-1 text-success"></i>
+                  </div>
+                  <Card.Title className="fs-4">Bulk Pricing</Card.Title>
+                  <Card.Text>
+                    Competitive wholesale prices for restaurants, grocery stores, and businesses.
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
+      </div>
     </Layout>
   );
 }
