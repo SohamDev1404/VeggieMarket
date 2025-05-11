@@ -58,3 +58,12 @@ yarn dev
 
 Open http://localhost:3000 in your browser to see the app.
 
+![Screenshot 2025-05-11 183002](https://github.com/user-attachments/assets/e84f9435-4381-4704-8756-c69aa1755900)
+![Screenshot 2025-05-11 182553](https://github.com/user-attachments/assets/7bfe6017-727e-4a1c-a623-4779fb20a2a2)
+![Screenshot 2025-05-11 182545](https://github.com/user-attachments/assets/cb5e17e7-5d0c-472d-85c1-c7a1f068e22e)
+![Screenshot 2025-05-11 182533](https://github.com/user-attachments/assets/672084e9-5752-4bcd-9b90-53db9234b3bc)
+![Screenshot 2025-05-11 182856](https://github.com/user-attachments/assets/b3e852ac-8ac7-429b-b16c-5cd903f32f79)
+![Screenshot 2025-05-11 182844](https://github.com/user-attachments/assets/e390335a-ad68-4248-8f05-8dd579d0291e)
+![Screenshot 2025-05-11 182739](https://github.com/user-attachments/assets/553e1444-99f7-4c42-825a-83655ab43c07)
+![Screenshot 2025-05-11 182600](https://github.com/user-attachments/assets/7bb58d78-bdfe-4336-a42f-44fc9884b433)
+
